@@ -33,3 +33,153 @@
 				~]# poweroff
 				~]# halt
 				~]# reboot
+
+------------------------------------------------------------------------------------------------------------------------------------------
+
+Linux基础知识
+	命令的语法通用格式：
+		# COMMAND OPTIONS ARGUMENTS
+		COMMAND: 
+			发起一命令：请求内核将某个二进制程序运行为一个进程；
+				程序 --> 进程
+				静态 --> 动态（有生命周期）
+
+			命令本身是一个可执行的程序文件：二进制格式的文件，有可能会调用共享库文件；
+				注意：系统管理命令普遍存在sbin文件中，系统普通命令普遍存在于bin文件中
+				多数系统程序文件都存放在：/bin, /sbin, /usr/bin, /usr/sbin，/usr/local/bin, /usr/local/sbin
+					普通命令：/bin, /usr/bin, /usr/local/bin
+					管理命令：/sbin, /usr/sbin, /usr/local/sbin
+				共享库：/lib, /lib64, /usr/lib, /usr/lib64, /usr/local/lib, /usr/local/lib64
+					32bits的库：/lib, /usr/lib, /usr/local/lib
+					64bits的库：/lib64, /usr/lib64, /usr/local/lib64
+
+				注意：并非所有的命令都有一个在某目录与之对应的可执行程序文件
+
+			命令必须遵循特定格式规范：exe, msi, ELF(Linux)
+				~]# file /bin/ls
+
+			命令分为两类：
+				由shell程序的自带的命令：内置命令(builtin)
+				独立的可执行程序文件，文件名即命令名：外部命令
+
+			shell程序是独特的程序，负责解析用户提供的命令；
+				环境变量：
+					PATH：从哪些路径中查找用户键入的命令字符串所对应的命令文件；
+						~]# echo $PATH
+						/usr/lib64/qt-3.3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin
+
+						查找次序：自左而右；
+
+			查看命令类型：
+				type COMMAND
+
+	获取命令的使用帮助：
+		内部命令：
+			help COMMAND
+		外部命令：
+			(1) 命令自带简要格式的使用帮助
+				# COMMAND --help
+			(2) 使用手册：manual
+				位置：/usr/share/man
+				# man COMMAND
+
+					SECTION：
+						NAME：功能性说明
+						SYNOPSIS：语法格式
+						DESCRIPTION：描述
+						OPTIONS：选项
+						EXAMPLES：使用示例
+						AUTHOR: 作者
+						BUGS: 报告程序bug的方式
+						SEE ALSO: 参考
+						...
+
+					SYNOPSIS: 
+						[]：可选内容；
+						<>：必须提供的内容；
+						a|b|c：多选一；
+						...：同类内容可出现多个；
+
+				man命令打开手册以后的操作方法：
+					翻屏：
+						空格键：向文件尾翻一屏；
+						b: 向文件首部翻一屏；
+						Ctrl+d：向文件尾部翻半屏；
+						Ctrl+u：向文件首部翻半屏；
+						回车键：向文件尾部翻一行；
+						k: 向文件首部翻一行；
+						G：跳转至最后一行；
+						#G: 跳转至指定行；
+						1G：跳转至文件首部；
+
+					文本搜索：
+						/keyword：从文件首部向文件尾部依次查找；不区分字符大小写；
+						?keyword：从文件尾部向文件首部依次查找；	
+							n: 与查找命令方向相同；
+							N: 与查找命令方向相反；
+
+					退出：
+						q: quit
+
+
+		常用命令：
+			pwd: printing working directory
+				显示工作目录
+
+			cd：change directory
+				cd [/PATH/TO/SOMEDIR]	
+					cd: 切换回家目录；
+						注意：bash中, ~表示家目录；
+					cd ~：切换回自己的家目录
+					cd ~USERNAME：切换至指定用户的家目录；
+					cd -：在上一次所在目录与当前目录之间来回切换；
+						相关的环境变量
+							$PWD：当前工作目录
+							$OLDPWD：上一次的工作目录
+
+					.
+					..
+
+			ls: list, 列出指定目录下的内容
+				ls [OPTION]... [FILE]...
+
+					-a: 显示所有文件，包括隐藏文件；
+					-A：显示除.和..之外的所有文件；
+					-l: --long, 长格式列表，即显示文件的详细属性信息；
+						-rw-r--r--. 1 root   root     8957 10月 14 19:34 boot.log
+						-：文件类型，-, d, b, c, l, s, p
+						rw-r--r--
+							rw-：文件属主的权限；
+							r--：文件属组的权限；
+							r--：其它用户（非属主、属组）的权限；
+						1：数字表示文件被硬链接的次数；
+						root：文件的属主；
+						root：文件的属组；
+						8957：数字表示文件的大小，单位是字节；
+						10月 14 19:34 ：文件最近一次被修改的时间；
+						boot.log：文件名
+					-h, --human-readable：对文件大小单位换算；换算后结果可能会非精确值；
+					-d：查看目录自身而非其内部的文件列表；
+					-r: reverse, 逆序显示；
+					-R: recursive，递归显示；
+
+			cat：concatenate
+				文件文本查看工具；
+					cat /etc/fstab
+					cat /etc/passwd
+
+				cat [OPTION]... [FILE]...
+					-n：给显示的文本行编号；
+					-E: 显示行结束符$；
+
+			tac：
+				文件文本查看工具；
+					tac /etc/fstab
+					tac /etc/passwd
+
+				tac [OPTION]... [FILE]...
+					-n：给显示的文本行编号；
+					-E: 显示行结束符$；
+
+			file：查看文件内容类型；
+				file [FILE]...

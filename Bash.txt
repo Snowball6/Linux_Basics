@@ -1,0 +1,100 @@
+
+bash的基础特性：
+
+	globbing：文件名通配(整体文件名匹配，而非部分)
+
+		匹配模式：元字符
+			*：匹配任意长度的任意字符
+				pa*, *pa*, *pa, *p*a*
+					pa, paa, passwd
+			?：匹配任意单个字符
+				pa?, ??pa, p?a, p?a?
+					pa, paa, passwd
+			[]：匹配指定范围内的任意单个字符
+				有几种特殊格式：
+					[a-z], [A-Z], [0-9], [a-z0-9]
+					[[:upper:]]：所有大写字母
+					[[:lower:]]：所有小写字母
+					[[:alpha:]]：所有字母
+					[[:digit:]]：所有数字
+					[[:alnum:]]：所有的字母和数字
+					[[:space:]]：所有空白字符
+					[[:punct:]]：所有标点符号
+
+					pa[0-9][0-9], 2[0-9][0-9]
+			[^]：匹配指定范围外的任意单个字符
+				[^[:upper:]]
+				[^0-9]
+				[^[:alnum:]]
+
+
+	IO重定向及管道
+
+		程序：指令+数据
+			程序：IO
+
+			可用于输入的设备：文件
+				键盘设备、文件系统上的常规文件、网卡等；
+			可用于输出的设备：文件
+				显示器、文件系统上的常规文件、网卡等；
+
+			程序的数据流有三种：
+				输入的数据流；<-- 标准输入(stdin)，键盘；
+				输出的数据流：--> 标准输出(stdout)，显示器；
+				错误输出流：  --> 错误输出(stderr)，显示器；
+
+			fd: file descriptor，文件描述符
+				标准输入：0
+				标准输出：1
+				错误输出：2
+
+		IO重定向：
+
+			输出重定向：>
+				特性：覆盖输出
+			输出重定向：>>
+				特性：追加输出
+
+			# set -C
+				禁止覆盖输出重定向至已存在的文件；
+				此时可使用强制覆盖输出：>|
+			# set +C
+				关闭上述特性
+
+			错误输出流重定向：2>, 2>>
+
+			合并正常输出流和错误输出流：
+				(1) &>, &>>
+				(2) COMMAND > /path/to/somefile 2>&1
+				    COMMAND >> /path/to/somefile 2>&1
+
+				特殊设备：/dev/null
+
+			输入重定向：<
+
+			tr命令：
+				tr [OPTION]... SET1 [SET2]
+					把输入的数据当中的字符，凡是在SET1定义范围内出现的，通通对位转换为SET2出现的字符
+
+				用法1：
+					tr SET1 SET2 < /PATH/FROM/SOMEFILE
+				用法2：
+					tr -d SET1 < /PATH/FROM/SOMEFILE
+
+				注意：不修改原文件
+
+			Here Document：<<
+
+				cat << EOF
+				cat > /PATH/TO/SOMEFILE << EOF
+
+			管道：连接程序，实现将前一个命令的输出直接定向后一个程序当作输入数据流
+				COMMAND1 | COMMAND2 | COMMAND3 | ...
+
+				tee命令：
+					COMMAND | tee /PATH/TO/SOMEFILE
+
+			练习1：把/etc/passwd文件的前6行的信息转换为大写字符后输出；
+				head -n 6 /etc/passwd | tr 'a-z' 'A-Z'
+
+		命令总结：tr, tee

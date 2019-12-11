@@ -1,0 +1,66 @@
+Linux用户和组管理
+
+	安装上下文：
+		进程以其发起者的身份运行；
+			进程对文件的访问权限，取决于发起此进程的用户的权限；
+
+	系统用户：为了能够让那后台进程或服务类进程以非管理员的身份运行，通常需要为此创建多个普通用户；这类用户从不用登录系统；
+
+
+	groupadd命令：添加组
+
+		groupadd [选项] group_name
+
+			-g GID：指定GID；默认是上一个组的GID+1；
+			-r: 创建系统组；
+
+	groupmod命令：修改组属性
+
+		groupmod [选项] GROUP
+			-g GID：修改GID；
+			-n new_name：修改组名；
+
+	groupdel命令：删除组
+
+		groupdel [选项] GROUP
+
+	useradd命令：创建用户
+
+		useradd [选项] 登录名
+			-u, --uid UID：指定UID；
+			-g, --gid GROUP：指定基本组ID，此组得事先存在；
+			-G, --groups GROUP1[,GROUP2,...[,GROUPN]]]：指明用户所属的附加组，多个组之间用逗号分隔；
+			-c, --comment COMMENT：指明注释信息；
+			-d, --home HOME_DIR：以指定的路径为用户的家目录；通过复制/etc/skel此目录并重命名实现；指定的家目录路径如果事先存在，则不会为用户复制环境配置文件；
+			-s, --shell SHELL：指定用户的默认shell，可用的所有shell列表存储在/etc/shells文件中；
+			-r, --system：创建系统用户；
+
+		注意：创建用户时的诸多默认设定配置文件为/etc/login.defs		
+
+		useradd -D：显示创建用户的默认配置；
+		useradd -D 选项: 修改默认选项的值；
+
+			修改的结果保存于/etc/default/useradd文件中；
+
+	usermod命令：修改用户属性
+
+		usermod [选项] 登录
+			-u, --uid UID：修改用户的ID为此处指定的新UID；
+			-g, --gid GROUP：修改用户所属的基本组；
+			-G, --groups GROUP1[,GROUP2,...[,GROUPN]]]：修改用户所属的附加组；原来的附加组会被覆盖；
+			-a, --append：与-G一同使用，用于为用户追加新的附加组；
+			-c, --comment COMMENT：修改注释信息；
+			-d, --home HOME_DIR：修改用户的家目录；用户原有的文件不会被转移至新位置；
+			-m, --move-home：只能与-d选项一同使用，用于将原来的家目录移动为新的家目录；
+			-l, --login NEW_LOGIN：修改用户名；
+			-s, --shell SHELL：修改用户的默认shell；
+
+			-L, --lock：锁定用户密码；即在用户原来的密码字符串之前添加一个"!"；
+			-U, --unlock：解锁用户的密码；
+
+	userdel命令：删除用户
+
+		userdel [选项] 登录
+			-r：删除用户时一并删除其家目录；
+
+----------------------------------------------------------------------------------------------------------------------------------------

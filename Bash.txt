@@ -188,3 +188,27 @@ bash的基础特性：
 			group_name:password:GID:user_list
 
 				user_list：该组的用户成员；以此组为附加组的用户的用户列表；
+				
+-----------------------------------------------------------------------------------------------------------------------------------------
+	用户管理基础概念：
+		用户类别：
+			管理员、普通用户（系统用户和登录用户）
+		组类别：
+			管理员组、普通用户组
+			基本组和附加组
+			私有组、公共组
+		数据库文件：
+			/etc/passwd
+				login:password:uid:gid:comment:home:shell
+			/etc/shadow
+				login:encrpted_password:...
+			/etc/group
+				group:password:gid:user_list
+
+			密码存储格式：单向加密，并借助于salt完成
+				1: md5
+				sha1
+				sha224
+				sha256
+				sha384
+				6: sha512

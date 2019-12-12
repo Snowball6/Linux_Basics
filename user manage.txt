@@ -176,3 +176,214 @@ Linux用户和组管理
 			-r：删除用户时一并删除其家目录；
 
 ----------------------------------------------------------------------------------------------------------------------------------------
+
+passwd命令：
+
+		passwd [-k] [-l] [-u [-f]] [-d] [-e] [-n mindays] [-x maxdays] [-w warndays] [-i inactivedays] [-S] [--stdin] [username]
+
+		(1) passwd：修改用户自己的密码；
+		(2) passwd USERNAME：修改指定用户的密码，但仅root有此权限；
+
+			-l, -u：锁定和解锁用户；
+			-d：清除用户密码串；
+			-e DATE: 过期期限，日期；
+			-i DAYS：非活动期限；
+			-n DAYS：密码的最短使用期限；
+			-x DAYS：密码的最长使用期限；
+			-w DAYS：警告期限；
+
+			--stdin：
+				echo "PASSWORD" | passwd --stdin USERNAME
+
+	gpasswd命令：
+
+		组密码文件：/etc/gshadow
+
+		gpasswd [选项] group
+			-a USERNAME：向组中添加用户
+			-d USERNAME：从组中移除用户
+
+	newgrp命令：临时切换指定的组为基本组；
+
+		newgrp [-] [group]
+
+			-: 会模拟用户重新登录以实现重新初始化其工作环境；
+
+	chage命令：更改用户密码过期信息
+
+		chage [选项] 登录名
+
+			-d
+			-E
+			-W
+			-m
+			-M
+
+	id命令：显示用户的真和有效ID; 
+
+		id [OPTION]... [USER]
+			-u: 仅显示有效的UID；
+			-g: 仅显示用户的基本组ID; 
+			-G：仅显示用户所属的所有组的ID；
+			-n: 显示名字而非ID；
+
+	su命令：switch user
+
+		登录式切换：会通过读取目标用户的配置文件来重新初始化
+			su - USERNAME
+			su -l USERNAME
+		非登录式切换：不会读取目标用户的配置文件进行初始化
+			su USERNAME
+
+		注意：管理员可无密码切换至其它任何用户；
+
+		-c 'COMMAND'：仅以指定用户的身份运行此处指定的命令；
+
+	其它几个命令：chsh, chfn, finger, whoami, pwck, grpck
+
+	命令总结：groupadd, groupmod, groupdel, useradd, usermod, userdel, passwd, gpasswd, newgrp, id, su, chage
+
+
+
+	权限管理：
+
+		ls -l 
+			rwxrwxrwx:
+				左三位：定义user(owner)的权限
+				中三位：定义group的权限；
+				右三位：定义other的权限
+
+		进程安全上下文：
+			进程对文件的访问权限应用模型：
+				进程的属主与文件的属主是否相同；如果相同，则应用属主权限；
+				否则，则检查进程的属主是否属于文件的属组；如果是，则应用属组权限；
+				否则，就只能应用other的权限；
+
+		权限：
+			r：readable, 读
+			w：writable, 写
+			x：excutable，执行
+
+			文件：
+				r：可获取文件的数据；
+				w: 可修改文件的数据；
+				x：可将此文件运行为进程；
+
+			目录：
+				r：可使用ls命令获取其下的所有文件列表；
+				w: 可修改此目录下的文件列表；即创建或删除文件；
+				x: 可cd至此目录中，且可使用ls -l来获取所有文件的详细属性信息；
+
+			mode：rwxrwxrwx
+			ownership：user, group
+
+		权限组合机制：
+			--- 000 0
+			--x 001 1
+			-w- 010 2
+			-wx 011 3
+			r-- 100 4
+			r-x 101 5
+			rw- 110 6
+			rwx 111 7
+
+		练习：rw-rw-r--, rwxrwxr-x, rwxr-x---, rw------, rwxr-xr-x
+			  664, 640, 600, 775, 750, 755
+
+		权限管理命令：
+			chmod命令：
+		       chmod [OPTION]... MODE[,MODE]... FILE...
+		       chmod [OPTION]... OCTAL-MODE FILE...
+		       chmod [OPTION]... --reference=RFILE FILE...
+
+		       三类用户：
+		       		u：属主
+		       		g：属组
+		       		o：其它
+		       		a: 所有
+
+		       (1) chmod [OPTION]... MODE[,MODE]... FILE...
+
+		       		MODE表示法：
+		       			赋权表示法：直接操作一类用户的所有权限位rwx；
+		       				u=
+		       				g=
+		       				o=
+		       				a=
+
+		       			授权表示法：直接操作一类用户的一个权限位r,w,x；
+		       				u+, u-
+		       				g+, g-
+		       				o+, o-
+		       				a+, a-
+
+		       	(2) chmod [OPTION]... OCTAL-MODE FILE...
+
+		       	(3) chmod [OPTION]... --reference=RFILE FILE...
+
+		       	选项：
+		       		-R, --recursive：递归修改
+
+		       	注意：用户仅能修改属主为自己的那些文件的权限；
+
+		从属关系管理命令：chown, chgrp
+
+			chown命令：
+				chown [OPTION]... [OWNER][:[GROUP]] FILE...
+        		chown [OPTION]... --reference=RFILE FILE...
+
+        		选项：
+        			-R：递归修改
+
+        	chgrp命令：
+
+       			chgrp [OPTION]... GROUP FILE...
+       			chgrp [OPTION]... --reference=RFILE FILE...
+
+       		注意：仅管理员可修改文件的属主和属组；
+
+       	思考：用户对目录有写权限，但对目录下的文件没有写权限时，能否修改此文件内容？能否删除此文件？
+       		模拟之；
+
+       	umask：文件的权限反向掩码，遮罩码；
+       		文件：
+       			666-umask
+       		目录：
+       			777-umask
+
+       		注意：之所以文件用666去减，表示文件默认不能拥有执行权限；如果减得的结果中有执行权限，则需要将其加1；
+       			umask: 023
+       				666-023=644
+       				777-023=754
+
+       		umask命令：
+       			umask：查看当前umask
+       			umask MASK: 设置umask
+
+       		注意：此类设定仅对当前shell进程有效；
+			
+	install命令：
+    	install - copy files and set attributes
+
+    	单源复制：
+       		install [OPTION]... [-T] SOURCE DEST
+       	多源复制：
+       		install [OPTION]... SOURCE... DIRECTORY
+       		install [OPTION]... -t DIRECTORY SOURCE...
+       	创建目录：
+       		install [OPTION]... -d DIRECTORY...
+
+       	常用选项：
+       		-m, --mode=MODE：设定目标文件权限，默认为755；
+       		-o, --owner=OWNER：设定目标文件属主；
+       		-g, --group=GROUP：设定目标文件属组；
+
+    mktemp命令：
+    	mktemp - create a temporary file or directory
+
+    	mktemp [OPTION]... [TEMPLATE]
+
+    		常用选项：
+    			-d：创建临时目录
+
+    	注意：mktemp会将创建的临时文件名直接返回，因此，可直接通过命令引用保存起来；

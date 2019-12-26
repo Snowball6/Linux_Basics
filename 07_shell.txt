@@ -157,4 +157,36 @@ bash脚本编程
 					
 					hostName=$(hostname)
 					
-					[ -z "$hostName" -o "$hostName" == "localhost.localdomain" -o "$hostName" == "localhost" ] && hostname www.magedu.com 				
+					[ -z "$hostName" -o "$hostName" == "localhost.localdomain" -o "$hostName" == "localhost" ] && hostname www.magedu.com 		
+
+脚本的状态返回值：
+			默认是脚本中执行的最后一条件命令的状态返回值；
+			自定义状态退出状态码：
+				exit  [n]：n为自己指定的状态码；
+					注意：shell进程遇到exit时，即会终止，因此，整个脚本执行即为结束；
+					
+	向脚本传递参数：
+		位置参数变量
+		
+		myscript.sh  argu1 argu2
+			引用方式：
+				$1,  $2, ..., ${10}, ${11}, ...
+				
+			轮替：
+				shift  [n]：位置参数轮替；
+				
+		练习：写一脚本，通过命令传递两个文本文件路径给脚本，计算其空白行数之和；
+			
+			#!/bin/bash
+			#
+			file1_lines=$(grep "^$" $1 | wc -l)
+			file2_lines=$(grep "^$" $2 | wc -l)
+
+			echo "Total blank lines: $[$file1_lines+$file2_lines]"	
+			
+	特殊变量：
+		$0：脚本文件路径本身；
+		$#：脚本参数的个数；
+		$*：所有参数
+		$@：所有参数
+					

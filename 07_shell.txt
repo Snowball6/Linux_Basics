@@ -101,3 +101,60 @@ bash脚本编程
 				注意：
 					(1) 字符串要加引用；
 					(2) 要使用[[ ]]；
+					
+------------------------------------------------------------------------------------------------------------------------------------
+文件测试：
+				存在性测试
+					-a  FILE
+					-e  FILE
+						文件的存在性测试，存在则为真，否则则为假；
+				存在性及类型测试
+					-b  FILE：是否存在并且为 块设备 文件；
+					-c  FILE：是否存在并且为 字符设备 文件；
+					-d  FILE：是否存在并且为 目录文件；
+					-f  FILE：是否存在并且为 普通文件；
+					-h  FILE或 -L  FILE：是否存在并且为 符号链接文件；
+					-p FILE：是否存在且为 命名管道文件；
+					-S  FILE：是否存在且为 套接字文件；
+				文件权限测试：
+					-r  FILE：是否存在并且 对当前用户可读；
+					-w  FILE：是否存在并且 对当前用户可写；
+					-x  FILE：是否存在并且 对当前用户可执行；
+				特殊权限测试：
+					-u  FILE：是否存在并且 拥有suid权限；
+					-g  FILE：是否存在并且 拥有sgid权限；
+					-k  FILE：是否存在并且 拥有sticky权限；
+				文件是否有内容：
+					-s  FILE：是否有内容；
+				时间戳：
+					-N FILE：文件自从上一次读操作后是否被修改过；
+				从属关系测试：
+					-O  FILE：当前用户是否为文件的属主；
+					-G  FILE：当前用户是否属于文件的属组；
+				双目测试：
+					FILE1  -ef  FILE2：FILE1与FILE2是否指向同一个文件系统的相同inode的硬链接；
+					FILE1  -nt  FILE2：FILE1是否新于FILE2；
+					FILE1  -ot  FILE2：FILE1是否旧于FILE2；
+					
+			组合测试条件：
+				逻辑运算：
+					第一种方式：
+						COMMAND1 && COMMAND2
+						COMMAND1 || COMMAND2
+						! COMMAND 
+						
+						[ -O FILE ] && [ -r FILE ]
+						
+					第二种方式：
+						EXPRESSION1  -a  EXPRESSION2
+						EXPRESSION1  -o  EXPRESSION2
+						! EXPRESSION
+						
+						[ -O FILE -a -x FILE ]
+						
+				练习：将当前主机名称保存至hostName变量中；
+					主机名如果为空，或者为localhost.localdomain，则将其设置为www.magedu.com；
+					
+					hostName=$(hostname)
+					
+					[ -z "$hostName" -o "$hostName" == "localhost.localdomain" -o "$hostName" == "localhost" ] && hostname www.magedu.com 				
